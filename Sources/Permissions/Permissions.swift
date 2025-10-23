@@ -201,9 +201,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 _ = try? await CNContactStore().requestAccess(for: .contacts)
                 
             case .bluetooth:
-                let btmgr = CBCentralManager()
-                btmgr.scanForPeripherals(withServices: nil)
-                btmgr.stopScan()
+                _ = BluetoothHelper()
         }
     }
     
@@ -353,5 +351,32 @@ private class LocationHelper: NSObject, CLLocationManagerDelegate {
     }
     func requestAlways() {
         manager.requestAlwaysAuthorization()
+    }
+}
+
+private final class BluetoothHelper: NSObject, ObservableObject, CBCentralManagerDelegate {
+    private var centralManager: CBCentralManager!
+    
+    override init() {
+        super.init()
+        centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        switch central.state {
+            case .poweredOn:
+                print("Bluetooth ON ✅ — starting scan")
+                central.scanForPeripherals(withServices: nil)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    central.stopScan()
+                    print("Stopped scan")
+                }
+            case .unauthorized:
+                print("Bluetooth unauthorized ❌")
+            case .poweredOff:
+                print("Bluetooth off")
+            default:
+                print("Bluetooth state: \(central.state.rawValue)")
+        }
     }
 }
