@@ -125,6 +125,7 @@ private struct PermissionView: View {
                         }
                         .font(.caption)
                         .multilineTextAlignment(.center)
+                        .padding(.bottom)
                         Text(manager.localizationProvider.skipNoticeText)
                             .font(.caption)
                             .foregroundStyle(.secondary)
