@@ -44,6 +44,8 @@ public protocol PermissionsLocalizationProvider {
     var cantGrantSectionTitle: LocalizedStringKey { get set }
     /// The Help Text for the cantGrantSectionTitle Section, by default:
     var cantGrantHelpText: LocalizedStringKey { get set }
+    /// The "Need Help?" Buttons Title
+    var needHelpButtonTitle: LocalizedStringKey { get set }
 }
 
 public extension PermissionsLocalizationProvider where Self == DefaultPermissionsLocalizationProvider {
@@ -51,6 +53,8 @@ public extension PermissionsLocalizationProvider where Self == DefaultPermission
 }
 
 public struct DefaultPermissionsLocalizationProvider: PermissionsLocalizationProvider {
+    public var needHelpButtonTitle: LocalizedStringKey = "Need help?"
+    
     public var cantGrantHelpText: LocalizedStringKey = "Don't worry! This usally happens when the Permission Prompt was dismissed too early or you declined this Permission before, tap this Message to open Settings and Grant the Permission manually there"
     
     public var cantGrantSectionTitle: LocalizedStringKey = "I can't grant this Permission!"

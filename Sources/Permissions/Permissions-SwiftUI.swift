@@ -120,6 +120,11 @@ private struct PermissionView: View {
             ZStack {
                 if !isGranted {
                     VStack {
+                        Button(manager.localizationProvider.needHelpButtonTitle) {
+                            showHelp.toggle()
+                        }
+                        .font(.caption)
+                        .multilineTextAlignment(.center)
                         Text(manager.localizationProvider.skipNoticeText)
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -131,6 +136,7 @@ private struct PermissionView: View {
                         .multilineTextAlignment(.center)
                     }
                     .offset(y: showSkip ? -60 : 0)
+                    .opacity(showSkip ? 1 : 0)
                     .padding(.horizontal, 50)
                 }
                 Button(action: {
