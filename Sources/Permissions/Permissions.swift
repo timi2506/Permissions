@@ -219,7 +219,11 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 
             case .contacts:
                 let status = CNContactStore.authorizationStatus(for: .contacts)
-                return status == .authorized
+                if #available(iOS 18, *) {
+                    return status == .authorized || status == .limited
+                } else {
+                    return status == .authorized
+                }
                 
             case .bluetooth:
                 return CBCentralManager().authorization == .allowedAlways

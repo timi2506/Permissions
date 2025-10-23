@@ -84,7 +84,7 @@ private struct PermissionsSheet: ViewModifier {
             .contentShape(.rect)
             Spacer()
             Button(action: {
-                
+                isPresented = false
             }) {
                 HStack {
                     Spacer()
