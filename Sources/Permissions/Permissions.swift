@@ -40,6 +40,10 @@ public protocol PermissionsLocalizationProvider {
     var whatDoesThisPermissionDoSectionTitle: LocalizedStringKey { get set }
     /// The "Permissions" Title shown in the Sheet
     var permissionsTitle: LocalizedStringKey { get set }
+    /// The "I can't grant this Permission!" Title shown in the Sheet
+    var cantGrantSectionTitle: LocalizedStringKey { get set }
+    /// The Help Text for the cantGrantSectionTitle Section, by default:
+    var cantGrantHelpText: LocalizedStringKey { get set }
 }
 
 public extension PermissionsLocalizationProvider where Self == DefaultPermissionsLocalizationProvider {
@@ -47,6 +51,10 @@ public extension PermissionsLocalizationProvider where Self == DefaultPermission
 }
 
 public struct DefaultPermissionsLocalizationProvider: PermissionsLocalizationProvider {
+    public var cantGrantHelpText: LocalizedStringKey = "Don't worry! This usally happens when the Permission Prompt was dismissed too early or you declined this Permission before, tap this Message to open Settings and Grant the Permission manually there"
+    
+    public var cantGrantSectionTitle: LocalizedStringKey = "I can't grant this Permission!"
+    
     public var permissionsTitle: LocalizedStringKey = "Permissions"
     
     public var whatDoesThisPermissionDoSectionTitle: LocalizedStringKey = "What does this Permission do?"

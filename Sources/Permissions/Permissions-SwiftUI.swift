@@ -167,6 +167,15 @@ private struct PermissionView: View {
                     Section(manager.localizationProvider.whatDoesThisPermissionDoSectionTitle) {
                         Text(permission.localizedDescription)
                     }
+                    Section(manager.localizationProvider.cantGrantSectionTitle) {
+                        Text(manager.localizationProvider.cantGrantHelpText)
+                            .onTapGesture {
+                                if let url = URL(string: UIApplication.openSettingsURLString),
+                                   UIApplication.shared.canOpenURL(url) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                    }
                 }
                 .navigationTitle(manager.localizationProvider.helpNavigationTitle)
                 .navigationBarTitleDisplayMode(.inline)
