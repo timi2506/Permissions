@@ -127,16 +127,16 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
     }
     
     /// A Short Title for the Permission, e.g. "Microphone"
-    var localizedTitle: LocalizedStringKey {
+    public var localizedTitle: LocalizedStringKey {
         return Self.localizationProvider.makeLocalizedTitle(for: self)
     }
     
     /// A Descriptive Text explaining the user what the given Permission grants your App access to
-    var localizedDesciption: LocalizedStringKey {
+    public var localizedDesciption: LocalizedStringKey {
         return Self.localizationProvider.makeLocalizedDescription(for: self)
     }
     
-    var sfSymbol: String {
+    public var sfSymbol: String {
         switch self {
             case .camera:
                 "camera"
@@ -161,7 +161,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
         }
     }
     
-    func request() async {
+    public func request() async {
         guard self.hasRequiredInfoPlistKey() else {
             return
         }
@@ -193,7 +193,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
         }
     }
     
-    func isAuthorized() async -> Bool {
+    public func isAuthorized() async -> Bool {
         switch self {
             case .camera:
                 return AVCaptureDevice.authorizationStatus(for: .video) == .authorized
@@ -228,7 +228,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
         
     
 
-    func hasRequiredInfoPlistKey() -> Bool {
+    public func hasRequiredInfoPlistKey() -> Bool {
         let bundle = Bundle.main
         
         guard let key = self.requiredPlistKey else { return true }
