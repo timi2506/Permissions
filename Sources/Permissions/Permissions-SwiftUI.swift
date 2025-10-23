@@ -117,7 +117,6 @@ private struct PermissionView: View {
                     showHelp.toggle()
                 }
             Spacer()
-            ZStack {
                 if !isGranted {
                     VStack {
                         Button(manager.localizationProvider.needHelpButtonTitle) {
@@ -136,7 +135,7 @@ private struct PermissionView: View {
                         .font(.caption)
                         .multilineTextAlignment(.center)
                     }
-                    .offset(y: showSkip ? -60 : 0)
+                    .offset(y: !showSkip ? 100 : 0)
                     .opacity(showSkip ? 1 : 0)
                     .padding(.horizontal, 50)
                 }
@@ -165,7 +164,6 @@ private struct PermissionView: View {
                 .disabled(isProcessing)
                 .padding()
                 .padding(.horizontal)
-            }
         }
         .helpOverlayView(isPresented: $showHelp) {
             NavigationView {
@@ -233,7 +231,7 @@ private struct PermissionView: View {
             await changeProcessing(to: true)
         }
         isGranted = await permission.isAuthorized()
-        withAnimation(.bouncy) {
+        withAnimation(.bouncy(duration: 0.5, extraBounce: 0.25)) {
             showSkip = true
         }
         if !disableRepeatedAnimation {
