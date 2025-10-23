@@ -201,7 +201,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 _ = try? await CNContactStore().requestAccess(for: .contacts)
                 
             case .bluetooth:
-                _ = BluetoothHelper()
+                PermissionsManager.shared.bluetoothHelper = BluetoothHelper()
         }
     }
     
@@ -283,6 +283,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
 @MainActor
 public class PermissionsManager: ObservableObject {
     private init() {}
+    fileprivate var bluetoothHelper: BluetoothHelper?
     /// The Shared Singleton of PermissionsManager which also allows it to communicate with PermissionsSheet
     public static let shared = PermissionsManager()
     
@@ -354,7 +355,7 @@ private class LocationHelper: NSObject, CLLocationManagerDelegate {
     }
 }
 
-private final class BluetoothHelper: NSObject, ObservableObject, CBCentralManagerDelegate {
+private final class BluetoothHelper: NSObject, CBCentralManagerDelegate {
     private var centralManager: CBCentralManager!
     
     override init() {
