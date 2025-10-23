@@ -163,7 +163,7 @@ private struct PermissionView: View {
                 Form {
                     header(false)
                     Section(manager.localizationProvider.whatDoesThisPermissionDoSectionTitle) {
-                        Text(permission.localizedDesciption)
+                        Text(permission.localizedDescription)
                     }
                 }
                 .navigationTitle(manager.localizationProvider.helpNavigationTitle)

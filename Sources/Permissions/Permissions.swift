@@ -132,7 +132,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
     }
     
     /// A Descriptive Text explaining the user what the given Permission grants your App access to
-    public var localizedDesciption: LocalizedStringKey {
+    public var localizedDescription: LocalizedStringKey {
         return Self.localizationProvider.makeLocalizedDescription(for: self)
     }
     
