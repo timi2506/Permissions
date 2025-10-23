@@ -268,7 +268,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
 public class PermissionsManager: ObservableObject {
     private init() {}
     /// The Shared Singleton of PermissionsManager which also allows it to communicate with PermissionsSheet
-    static let shared = PermissionsManager()
+    public static let shared = PermissionsManager()
     
     /// The Localization Provider used to Localize the Permissions' Titles and Descriptions, you can set this to a Custom Provider using setLocalizationProvider, or by modifying this variable, and passing in a struct that conforms to PermissionsLocalizationProvider
     public var localizationProvider: PermissionsLocalizationProvider = .defaultProvider
