@@ -118,19 +118,21 @@ private struct PermissionView: View {
                 }
             Spacer()
             ZStack {
-                VStack {
-                    Text(manager.localizationProvider.skipNoticeText)
+                if !isGranted {
+                    VStack {
+                        Text(manager.localizationProvider.skipNoticeText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        Button(manager.localizationProvider.tapHereToSkipButtonTitle) {
+                            next()
+                        }
                         .font(.caption)
-                        .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
-                    Button(manager.localizationProvider.tapHereToSkipButtonTitle) {
-                        next()
                     }
-                    .font(.caption)
-                    .multilineTextAlignment(.center)
+                    .offset(y: showSkip ? -60 : 0)
+                    .padding(.horizontal, 50)
                 }
-                .offset(y: showSkip ? -60 : 0)
-                .padding(.horizontal, 50)
                 Button(action: {
                     Task {
                         if !isGranted {
