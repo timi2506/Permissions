@@ -189,7 +189,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 _ = try? await CNContactStore().requestAccess(for: .contacts)
                 
             case .bluetooth:
-                _ = BluetoothPermissionHelper.shared
+                _ = CBCentralManager()
         }
     }
     
@@ -222,7 +222,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 return status == .authorized
                 
             case .bluetooth:
-                return BluetoothPermissionHelper.shared.isAuthorized
+                return CBCentralManager().authorization == .allowedAlways
         }
     }
         
@@ -335,25 +335,5 @@ private class LocationHelper: NSObject, CLLocationManagerDelegate {
     }
     func requestAlways() {
         manager.requestAlwaysAuthorization()
-    }
-}
-
-final private class BluetoothPermissionHelper: NSObject, CBCentralManagerDelegate {
-    @MainActor static let shared = BluetoothPermissionHelper()
-    private var manager: CBCentralManager?
-    private(set) var isAuthorized = false
-    
-    override init() {
-        super.init()
-        manager = CBCentralManager(delegate: self, queue: nil)
-    }
-    
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        switch central.state {
-            case .poweredOn:
-                isAuthorized = true
-            default:
-                isAuthorized = false
-        }
     }
 }
