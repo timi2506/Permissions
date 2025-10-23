@@ -201,7 +201,9 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 _ = try? await CNContactStore().requestAccess(for: .contacts)
                 
             case .bluetooth:
-                _ = CBCentralManager()
+                let btmgr = CBCentralManager()
+                btmgr.scanForPeripherals(withServices: nil)
+                btmgr.stopScan()
         }
     }
     
