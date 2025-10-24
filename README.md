@@ -38,6 +38,6 @@ GitHub Source Code: https://github.com/timi2506/PermissionsExample
 
 You can add this package to your project using Xcode:
 
-1. In Xcode, go to File > Add Packages…
+1. In Xcode, go to File > Add Package Dependencies…
 2. Enter the repository URL:
 `https://github.com/timi2506/Permissions`
