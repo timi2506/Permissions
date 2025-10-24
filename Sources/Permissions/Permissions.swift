@@ -382,3 +382,4 @@ private class BluetoothHelper: NSObject, CBCentralManagerDelegate, ObservableObj
         }
     }
 }
+
