@@ -2,6 +2,10 @@
 
 A Simple Permission Manager - built with SwiftUI in Mind
 
+## Documentation
+
+The Documentation is hosted on SwiftPackageIndex at https://swiftpackageindex.com/timi2506/Permissions/documentation
+
 ## Features
 
 - Request and check authorization for the following permissions:
