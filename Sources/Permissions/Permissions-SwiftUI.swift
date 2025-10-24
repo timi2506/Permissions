@@ -23,7 +23,7 @@ private struct PermissionsSheet: ViewModifier {
             .sheet(isPresented: $isPresented) {
                 sheetView
             }
-            .id(perms)
+            .id(isPresented)
     }
     var sheetView: some View {
         NavigationView {
@@ -62,6 +62,7 @@ private struct PermissionsSheet: ViewModifier {
             .navigationTitle(manager.localizationProvider.permissionsTitle)
             .navigationBarTitleDisplayMode(.inline)
         }
+        .interactiveDismissDisabled(!allowSkip)
     }
     var finishedView: some View {
         VStack {
