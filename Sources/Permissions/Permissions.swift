@@ -204,7 +204,7 @@ public enum PermissionType: String, @preconcurrency CaseIterable, RawRepresentab
                 _ = try? await CNContactStore().requestAccess(for: .contacts)
                 
             case .bluetooth:
-                PermissionsManager.shared.bluetoothHelper = BluetoothHelper.shared
+                PermissionsManager.shared.btHelper = BluetoothHelper()
         }
     }
     
@@ -217,11 +217,11 @@ public enum PermissionType: String, @preconcurrency CaseIterable, RawRepresentab
                 return AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
                 
             case .locationWhenInUse:
-                let status = CLLocationManager.authorizationStatus()
+                let status = CLLocationManager().authorizationStatus
                 return status == .authorizedWhenInUse || status == .authorizedAlways
                 
             case .locationAlways:
-                let status = CLLocationManager.authorizationStatus()
+                let status = CLLocationManager().authorizationStatus
                 return status == .authorizedAlways
                 
             case .notifications:
@@ -241,12 +241,10 @@ public enum PermissionType: String, @preconcurrency CaseIterable, RawRepresentab
                 }
                 
             case .bluetooth:
-                return PermissionsManager.shared.bluetoothHelper?.isGranted == true
+                return BluetoothHelper().peripheralManager.authorization == .allowedAlways
         }
     }
-        
     
-
     public func hasRequiredInfoPlistKey() -> Bool {
         let bundle = Bundle.main
         
@@ -286,7 +284,7 @@ public enum PermissionType: String, @preconcurrency CaseIterable, RawRepresentab
 @MainActor
 public class PermissionsManager: ObservableObject {
     private init() {}
-    fileprivate var bluetoothHelper: BluetoothHelper?
+    fileprivate var btHelper: BluetoothHelper?
     /// The Shared Singleton of PermissionsManager which also allows it to communicate with PermissionsSheet
     public static let shared = PermissionsManager()
     
@@ -358,30 +356,17 @@ private class LocationHelper: NSObject, CLLocationManagerDelegate {
     }
 }
 
-private class BluetoothHelper: NSObject, CBCentralManagerDelegate, ObservableObject {
-    static let shared: BluetoothHelper = BluetoothHelper()
+class BluetoothHelper: NSObject, CBPeripheralManagerDelegate {
+    var peripheralManager: CBPeripheralManager!
     
     override init() {
         super.init()
-    }
-    var manager: CBCentralManager?
-    @Published var isGranted = false
-    var onChange: (BluetoothHelper) -> Void = { _ in }
-    func request() {
-        if manager == nil {
-            self.manager = CBCentralManager(delegate: self, queue: nil, options: [:])
-        }
+        peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
     }
     
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if #available(iOS 13.0, tvOS 13, *) {
-            let authorization: CBManagerAuthorization = central.authorization
-            if authorization == .allowedAlways {
-                isGranted = true
-            } else {
-                isGranted = false
-            }
-            onChange(self)
+    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+        if peripheral.state == .poweredOn {
+            peripheral.startAdvertising(["test": true])
         }
     }
 }
