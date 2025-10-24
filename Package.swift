@@ -13,9 +13,6 @@ let package = Package(
             targets: ["Permissions"]
         ),
     ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.0.0")
-    ],
     targets: [
         .target(
             name: "Permissions"
