@@ -328,4 +328,3 @@ fileprivate extension View {
         .toggleStyle(.button)
         .permissionsSheet(isPresented: $isPresented, skipGranted: false, permissions: [.camera, .microphone, .bluetooth])
 }
-
