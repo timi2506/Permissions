@@ -1,8 +1,8 @@
 import SwiftUI
 
 public extension View {
-    func permissionsSheet(isPresented: Binding<Bool>, skipGranted: Bool, permissions: Set<PermissionType>) -> some View {
-        self.modifier(PermissionsSheet(isPresented: isPresented, skipGranted: skipGranted, perms: permissions.map { $0 }))
+    func permissionsSheet(isPresented: Binding<Bool>, skipAlreadyGranted: Bool = true, allowManualSkip: Bool = true, permissions: Set<PermissionType>) -> some View {
+        self.modifier(PermissionsSheet(isPresented: isPresented, skipGranted: skipAlreadyGranted, allowSkip: allowManualSkip, perms: permissions.map { $0 }))
     }
 }
 
@@ -10,6 +10,7 @@ private struct PermissionsSheet: ViewModifier {
     @StateObject var manager = PermissionsManager.shared
     @Binding var isPresented: Bool
     var skipGranted: Bool
+    var allowSkip: Bool
     let perms: Array<PermissionType>
     @State var currentIndex: Int = 0
     @State var hasFinished = false
@@ -29,7 +30,7 @@ private struct PermissionsSheet: ViewModifier {
             VStack {
                 ZStack {
                     if let permission = currentPermission {
-                        PermissionView(permission: permission, skipGranted: skipGranted) {
+                        PermissionView(permission: permission, skipGranted: skipGranted, allowSkip: allowSkip) {
                             withAnimation(.easeInOut(duration: 0.35)) {
                                 if currentIndex + 1 < perms.count {
                                     currentIndex += 1
@@ -107,6 +108,7 @@ private struct PermissionView: View {
     @State var showHelp = false
     var permission: PermissionType
     var skipGranted: Bool
+    var allowSkip: Bool
     var next: () -> Void
     var body: some View {
         VStack {
@@ -123,15 +125,18 @@ private struct PermissionView: View {
                         .font(.caption)
                         .multilineTextAlignment(.center)
                         .padding(.bottom)
-                        Text(manager.localizationProvider.skipNoticeText)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                        Button(manager.localizationProvider.tapHereToSkipButtonTitle) {
-                            next()
-                        }
-                        .font(.caption)
                         .multilineTextAlignment(.center)
+                        if allowSkip {
+                            Text(manager.localizationProvider.skipNoticeText)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                            Button(manager.localizationProvider.tapHereToSkipButtonTitle) {
+                                next()
+                            }
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                        }
                     }
                     .offset(y: !showSkip ? 100 : 0)
                     .opacity(showSkip ? 1 : 0)
@@ -326,5 +331,5 @@ fileprivate extension View {
     @Previewable @State var isPresented = true
     Toggle("Present Sheet", isOn: $isPresented)
         .toggleStyle(.button)
-        .permissionsSheet(isPresented: $isPresented, skipGranted: false, permissions: [.camera, .microphone, .bluetooth])
+        .permissionsSheet(isPresented: $isPresented, permissions: [.camera, .microphone, .bluetooth])
 }

@@ -13,39 +13,44 @@ public protocol PermissionsLocalizationProvider {
     /// A Descriptive Text explaining the user what the given Permission grants your App access to
     func makeLocalizedDescription(for type: PermissionType) -> LocalizedStringKey
     /// The header to display on top of Permissions in the Permission Sheet, Default: "This App Requires Access to"
-    var sheetHeader: LocalizedStringKey { get set }
+    var sheetHeader: LocalizedStringKey { get }
     /// The Title to display when setup has completed in the Permission Sheet, Default: "All Set!"
-    var allSetTitle: LocalizedStringKey { get set }
+    var allSetTitle: LocalizedStringKey { get }
     /// The Description to display when setup has completed in the Permission Sheet, Default: "Tap Done below to start using this App"
-    var allSetDescription: LocalizedStringKey { get set }
+    var allSetDescription: LocalizedStringKey { get }
     /// The Text to Display when a Permission is granted
-    var grantedTitle: LocalizedStringKey { get set }
+    var grantedTitle: LocalizedStringKey { get }
     /// The Text to Display when a Permission is not granted
-    var notGrantedTitle: LocalizedStringKey { get set }
+    var notGrantedTitle: LocalizedStringKey { get }
     /// The Grant Buttons Title
-    var grantButtonTitle: LocalizedStringKey { get set }
+    var grantButtonTitle: LocalizedStringKey { get }
     /// The Continue Buttons Title
-    var continueButtonTitle: LocalizedStringKey { get set }
+    var continueButtonTitle: LocalizedStringKey { get }
     /// The Done Buttons Title
-    var doneButtonTitle: LocalizedStringKey { get set }
+    var doneButtonTitle: LocalizedStringKey { get }
     /// The Text to display while waiting
-    var waitingTitle: LocalizedStringKey { get set }
+    var waitingTitle: LocalizedStringKey { get }
     /// The "Tap Here to Skip" Buttons Title, its displayed below the skipNoticeText
-    var tapHereToSkipButtonTitle: LocalizedStringKey { get set }
+    var tapHereToSkipButtonTitle: LocalizedStringKey { get }
     /// The Skip Notice, by default: "If you do not want to grant this Permission, you can"
-    var skipNoticeText: LocalizedStringKey { get set }
+    var skipNoticeText: LocalizedStringKey { get }
     /// The "Help" Sheet Title Header
-    var helpNavigationTitle: LocalizedStringKey { get set }
+    var helpNavigationTitle: LocalizedStringKey { get }
     /// The "What does this Permission do?" Title of the Section in the Help Sheet
-    var whatDoesThisPermissionDoSectionTitle: LocalizedStringKey { get set }
+    var whatDoesThisPermissionDoSectionTitle: LocalizedStringKey { get }
     /// The "Permissions" Title shown in the Sheet
-    var permissionsTitle: LocalizedStringKey { get set }
+    var permissionsTitle: LocalizedStringKey { get }
     /// The "I can't grant this Permission!" Title shown in the Sheet
-    var cantGrantSectionTitle: LocalizedStringKey { get set }
+    var cantGrantSectionTitle: LocalizedStringKey { get }
     /// The Help Text for the cantGrantSectionTitle Section, by default:
-    var cantGrantHelpText: LocalizedStringKey { get set }
+    var cantGrantHelpText: LocalizedStringKey { get }
     /// The "Need Help?" Buttons Title
-    var needHelpButtonTitle: LocalizedStringKey { get set }
+    var needHelpButtonTitle: LocalizedStringKey { get }
+}
+
+public extension PermissionsLocalizationProvider {
+    var skipNoticeText: LocalizedStringKey { DefaultPermissionsLocalizationProvider.defaultProvider.skipNoticeText }
+    var tapHereToSkipButtonTitle: LocalizedStringKey { DefaultPermissionsLocalizationProvider.defaultProvider.tapHereToSkipButtonTitle }
 }
 
 public extension PermissionsLocalizationProvider where Self == DefaultPermissionsLocalizationProvider {
@@ -54,36 +59,21 @@ public extension PermissionsLocalizationProvider where Self == DefaultPermission
 
 public struct DefaultPermissionsLocalizationProvider: PermissionsLocalizationProvider {
     public var needHelpButtonTitle: LocalizedStringKey = "Need help?"
-    
     public var cantGrantHelpText: LocalizedStringKey = "Don't worry! This usally happens when the Permission Prompt was dismissed too early or you declined this Permission before, tap this Message to open Settings and Grant the Permission manually there"
-    
     public var cantGrantSectionTitle: LocalizedStringKey = "I can't grant this Permission!"
-    
     public var permissionsTitle: LocalizedStringKey = "Permissions"
-    
     public var whatDoesThisPermissionDoSectionTitle: LocalizedStringKey = "What does this Permission do?"
-    
     public var helpNavigationTitle: LocalizedStringKey = "Help"
-    
     public var tapHereToSkipButtonTitle: LocalizedStringKey = "Tap here to Skip"
-    
     public var skipNoticeText: LocalizedStringKey = "If you do not want to grant this Permission, you can"
-    
     public var grantButtonTitle: LocalizedStringKey = "Grant"
-    
     public var continueButtonTitle: LocalizedStringKey = "Continue"
-    
     public var doneButtonTitle: LocalizedStringKey = "Done"
-    
     public var waitingTitle: LocalizedStringKey = "Waiting"
-    
     public var grantedTitle: LocalizedStringKey = "Granted"
-    
     public var notGrantedTitle: LocalizedStringKey = "Not Granted"
-    
     public var allSetDescription: LocalizedStringKey = "Tap Done below to start using this App"
     public var allSetTitle: LocalizedStringKey = "All Set!"
-    
     public func makeLocalizedTitle(for type: PermissionType) -> LocalizedStringKey {
         return switch type {
             case .camera:
