@@ -201,7 +201,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 _ = try? await CNContactStore().requestAccess(for: .contacts)
                 
             case .bluetooth:
-                PermissionsManager.shared.bluetoothHelper = BluetoothHelper()
+                PermissionsManager.shared.bluetoothHelper = BluetoothHelper.shared
         }
     }
     
@@ -238,7 +238,7 @@ public enum PermissionType: String, CaseIterable, RawRepresentable {
                 }
                 
             case .bluetooth:
-                return CBCentralManager().authorization == .allowedAlways
+                return PermissionsManager.shared.bluetoothHelper?.isGranted == true
         }
     }
         
@@ -355,29 +355,30 @@ private class LocationHelper: NSObject, CLLocationManagerDelegate {
     }
 }
 
-private final class BluetoothHelper: NSObject, CBCentralManagerDelegate {
-    private var centralManager: CBCentralManager!
+private class BluetoothHelper: NSObject, CBCentralManagerDelegate, ObservableObject {
+    static let shared: BluetoothHelper = BluetoothHelper()
     
     override init() {
         super.init()
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+    }
+    var manager: CBCentralManager?
+    @Published var isGranted = false
+    var onChange: (BluetoothHelper) -> Void = { _ in }
+    func request() {
+        if manager == nil {
+            self.manager = CBCentralManager(delegate: self, queue: nil, options: [:])
+        }
     }
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        switch central.state {
-            case .poweredOn:
-                print("Bluetooth ON ✅ — starting scan")
-                central.scanForPeripherals(withServices: nil)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    central.stopScan()
-                    print("Stopped scan")
-                }
-            case .unauthorized:
-                print("Bluetooth unauthorized ❌")
-            case .poweredOff:
-                print("Bluetooth off")
-            default:
-                print("Bluetooth state: \(central.state.rawValue)")
+        if #available(iOS 13.0, tvOS 13, *) {
+            let authorization: CBManagerAuthorization = central.authorization
+            if authorization == .allowedAlways {
+                isGranted = true
+            } else {
+                isGranted = false
+            }
+            onChange(self)
         }
     }
 }
