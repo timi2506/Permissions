@@ -13,7 +13,6 @@ private struct PermissionsSheet: ViewModifier {
     let perms: Array<PermissionType>
     @State var currentIndex: Int = 0
     @State var hasFinished = false
-    @State var isRefreshing = false
     private var currentPermission: PermissionType? {
         guard perms.indices.contains(currentIndex) else { return nil }
         return perms[currentIndex]
@@ -21,47 +20,44 @@ private struct PermissionsSheet: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: $isPresented) {
-                if isRefreshing {
-                    ProgressView()
-                } else {
-                    sheetView
-                }
+                sheetView
             }
+            .id(perms)
     }
     var sheetView: some View {
         NavigationView {
             VStack {
-                if let permission = currentPermission {
-                    PermissionView(permission: permission, skipGranted: skipGranted) {
-                        withAnimation {
-                            isRefreshing = true
-                            if currentIndex + 1 < perms.count {
-                                currentIndex += 1
-                            } else if currentIndex + 1 == perms.count {
-                                // ALL PERMS FINISHED
-                                hasFinished = true
-                                currentIndex += 1
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                                withAnimation {
-                                    isRefreshing = false
+                ZStack {
+                    if let permission = currentPermission {
+                        PermissionView(permission: permission, skipGranted: skipGranted) {
+                            withAnimation(.easeInOut(duration: 0.35)) {
+                                if currentIndex + 1 < perms.count {
+                                    currentIndex += 1
+                                } else if currentIndex + 1 == perms.count {
+                                    hasFinished = true
+                                    currentIndex += 1
                                 }
                             }
                         }
-                    }
-                    .animation(.default, value: currentIndex)
-                } else {
-                    if hasFinished {
-                        finishedView
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing),
+                            removal: .move(edge: .leading)
+                        ))
+                        .id(permission)
                     } else {
-                        Text("An Error occured")
-                        Button("Dismiss") {
-                            isPresented = false
+                        if hasFinished {
+                            finishedView
+                                .transition(.move(edge: .trailing))
+                        } else {
+                            Text("An Error occurred")
+                            Button("Dismiss") {
+                                isPresented = false
+                            }
                         }
                     }
                 }
+                .animation(.snappy(duration: 0.35), value: currentIndex)
             }
-            .animation(.default, value: currentIndex)
             .navigationTitle(manager.localizationProvider.permissionsTitle)
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -307,22 +303,29 @@ fileprivate extension View {
         }
     }
     func helpOverlayView<Content: View>(isPresented: Binding<Bool>, content: @escaping () -> Content) -> some View {
-        if #available(iOS 16.0, *) {
-            return self
-                .sheet(isPresented: isPresented) {
-                    content()
-                        .presentationDetents([.large, .medium])
-                }
-        } else {
-            return self
-                .fullScreenCover(isPresented: isPresented) {
-                    content()
-                }
+        Group {
+            if #available(iOS 16.0, *) {
+                self
+                    .sheet(isPresented: isPresented) {
+                        content()
+                            .presentationDetents([.large, .fraction(0.75)])
+                            .presentationDragIndicator(.visible)
+                    }
+            } else {
+                self
+                    .fullScreenCover(isPresented: isPresented) {
+                        content()
+                    }
+            }
         }
     }
 }
 
+@available(iOS 17.0, *)
 #Preview {
-    Text("Hello World!")
-        .permissionsSheet(isPresented: .constant(true), skipGranted: false, permissions: [.camera, .microphone, .bluetooth])
+    @Previewable @State var isPresented = true
+    Toggle("Present Sheet", isOn: $isPresented)
+        .toggleStyle(.button)
+        .permissionsSheet(isPresented: $isPresented, skipGranted: false, permissions: [.camera, .microphone, .bluetooth])
 }
+
