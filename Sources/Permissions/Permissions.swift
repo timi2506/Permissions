@@ -127,6 +127,7 @@ public struct DefaultPermissionsLocalizationProvider: PermissionsLocalizationPro
     public var sheetHeader: LocalizedStringKey = "This App Requires Access to"
 }
 
+
 import os
 
 @MainActor
