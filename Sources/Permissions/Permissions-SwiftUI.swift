@@ -1,14 +1,15 @@
 import SwiftUI
 
 public extension View {
-    func permissionsSheet(isPresented: Binding<Bool>, permissions: Set<PermissionType>) -> some View {
-        self.modifier(PermissionsSheet(isPresented: isPresented, perms: permissions.map { $0 }))
+    func permissionsSheet(isPresented: Binding<Bool>, skipGranted: Bool, permissions: Set<PermissionType>) -> some View {
+        self.modifier(PermissionsSheet(isPresented: isPresented, skipGranted: skipGranted, perms: permissions.map { $0 }))
     }
 }
 
 private struct PermissionsSheet: ViewModifier {
     @StateObject var manager = PermissionsManager.shared
     @Binding var isPresented: Bool
+    var skipGranted: Bool
     let perms: Array<PermissionType>
     @State var currentIndex: Int = 0
     @State var hasFinished = false
@@ -31,7 +32,7 @@ private struct PermissionsSheet: ViewModifier {
         NavigationView {
             VStack {
                 if let permission = currentPermission {
-                    PermissionView(permission: permission) {
+                    PermissionView(permission: permission, skipGranted: skipGranted) {
                         withAnimation {
                             isRefreshing = true
                             if currentIndex + 1 < perms.count {
@@ -41,7 +42,7 @@ private struct PermissionsSheet: ViewModifier {
                                 hasFinished = true
                                 currentIndex += 1
                             }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                                 withAnimation {
                                     isRefreshing = false
                                 }
@@ -109,6 +110,7 @@ private struct PermissionView: View {
     @State var showSkip = false
     @State var showHelp = false
     var permission: PermissionType
+    var skipGranted: Bool
     var next: () -> Void
     var body: some View {
         VStack {
@@ -211,6 +213,9 @@ private struct PermissionView: View {
         }
         .task {
             isGranted = await permission.isAuthorized()
+            if skipGranted && isGranted {
+                next()
+            }
         }
     }
     func changeProcessing(to newState: Bool) async {
@@ -319,5 +324,5 @@ fileprivate extension View {
 
 #Preview {
     Text("Hello World!")
-        .permissionsSheet(isPresented: .constant(true), permissions: [.camera, .microphone, .bluetooth])
+        .permissionsSheet(isPresented: .constant(true), skipGranted: false, permissions: [.camera, .microphone, .bluetooth])
 }
