@@ -130,11 +130,8 @@ public struct DefaultPermissionsLocalizationProvider: PermissionsLocalizationPro
 import os
 
 @MainActor
-public enum PermissionType: String, @preconcurrency CaseIterable, RawRepresentable {
-    public static var allCases: [PermissionType] = [.camera, .microphone, .locationAlways, .locationWhenInUse, .notifications, .photoLibrary, .contacts]
-    
-    case camera, microphone, locationWhenInUse, locationAlways, notifications, photoLibrary, contacts
-    @available(*, deprecated, message: "The Bluetooth Permissions currently does not work but im working on a fix") case bluetooth
+public enum PermissionType: String, CaseIterable, RawRepresentable {
+    case camera, microphone, locationWhenInUse, locationAlways, notifications, photoLibrary, contacts, bluetooth
     
     /// The Localization Provider used to Localize the Permissions' Titles and Descriptions, you can set this to a Custom Provider by Changing PermissionsManager.shared.localizationProvider
     static var localizationProvider: PermissionsLocalizationProvider {
